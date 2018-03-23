@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": { 
+  "AppServiceName": {
+      "value": "Yashappservice"
+  },
+  "AppServicePlanSize": {
+    "value": "S1"
+},
+"AppServicePlanSku": {
+  "value": "Standard"
+},
+"jobCollectionName": {
+  "value": "yashdemojobcollection"
+},
+"jobName": {
+  "value": "yashdemo"
+},
+  "storageType": {
+      "value": "Standard_LRS"
+  },
+  
+  "sqlserverAdminLogin": {
+    "value": "admin123"
+  },
+//enable this script if you want to use password value form keyvalut for sql server and comment the below parameter which has plain text.
+  /*"sqlserverAdminLoginPassword": {
+    "reference": {
+        "keyVault": {
+          "id": "/subscriptions/18bc600e-57c7-4ea5-b64a-bb62f1f34d2c/resourceGroups/innovationgroup-azureinfra/providers/Microsoft.KeyVault/vaults/yashdemo123"
+        },
+        "secretName": "SQLPassword"
+    }
+},
+ /*"keyVaultName": {
+    "value": "yashdemo123"
+  }
+  "objectId": {
+    "value": "GEN-AAD-OBJECTID"
+  }*/
+"sqlserverAdminLoginPassword": {
+  "value": "admin.123456"
+},
+  "sqldatabaseName": {
+    "value": "Yashsqldatabase"
+  },
+  "sqldatabaseCollation": {
+    "value": "SQL_Latin1_General_CP1_CI_AS"
+  },
+  "sqldatabaseEdition": {
+    "value": "Basic"
+  },
+  "sqldatabaseRequestedServiceObjectiveName": {
+    "value": "Basic"
+  }
+ 
+}
+}

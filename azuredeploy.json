@@ -1,0 +1,440 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "AppServiceName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "AppServicePlanSku": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "The pricing tier of the App Service plan."
+      }
+    },
+    "AppServicePlanSize": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity."
+      }
+    },
+    "jobCollectionName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the job collection."
+      }
+    },
+    "jobName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the job."
+      }
+    },
+    "Jobcollectionsku": {
+      "type": "object",
+      "defaultValue": {
+        "name": "Standard"
+      },
+      "metadata": {
+        "description": "sku for job collection."
+      }
+    },
+    "storageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    
+    "sqlserverAdminLogin": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sqlserverAdminLoginPassword": {
+      "type": "securestring"
+    },
+    "sqldatabaseName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sqldatabaseCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "sqldatabaseEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "sqldatabaseRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
+    }
+  },
+//use the below keyvault script in case you want to create keyvalut and store key for sql password
+  /*"keyVaultName": {
+    "type": "string",
+    "metadata": {
+      "description": "Name of the Vault"
+    }
+  },
+  "tenantId": {
+    "type": "string",
+    "defaultValue": "[subscription().tenantId]",
+    "metadata": {
+      "description": "Tenant Id of the subscription. Get using Get-AzureRmSubscription cmdlet or Get Subscription API"
+    }
+  },
+  "objectId": {
+    "type": "string",
+    "metadata": {
+      "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
+    }
+  },
+  "keysPermissions": {
+    "type": "array",
+    "defaultValue": ["all"],
+    "metadata": {
+      "description": "Permissions to keys in the vault. Valid values are: all, create, import, update, get, list, delete, backup, restore, encrypt, decrypt, wrapkey, unwrapkey, sign, and verify."
+    }
+  },
+  "secretsPermissions": {
+    "type": "array",
+    "defaultValue": ["all"],
+    "metadata": {
+      "description": "Permissions to secrets in the vault. Valid values are: all, get, set, list, and delete."
+    }
+  },
+  "skuName": {
+    "type": "string",
+    "defaultValue": "Standard",
+    "allowedValues": [
+      "Standard",
+      "Premium"
+    ],
+    "metadata": {
+      "description": "SKU for the vault"
+    }
+  },
+  "enableVaultForDeployment": {
+    "type": "bool",
+    "defaultValue": true,
+    "allowedValues": [
+      true,
+      false
+    ],
+    "metadata": {
+      "description": "Specifies if the vault is enabled for a VM deployment"
+    }
+  },
+  "enableVaultForDiskEncryption": {
+    "type": "bool",
+    "defaultValue": true,
+    "allowedValues": [
+      true,
+      false
+    ],
+    "metadata": {
+      "description": "Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."
+    }
+  },
+  "enabledForTemplateDeployment": {
+    "type": "bool",
+    "defaultValue": true,
+    "allowedValues": [
+      true,
+      false
+    ],
+    "metadata": {
+      "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+    }
+  }
+},*/
+  "variables": {
+    "webappName": "[concat('webapp', uniqueString(resourceGroup().id))]",
+    "storageName": "[concat('storage', uniqueString(resourceGroup().id))]",
+    "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
+    "cdnprofileName": "demo123",
+    "cdnendpointName": "[concat('demo123', uniqueString(resourceGroup().id))]"},
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "dependsOn": [],
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('AppServiceName')]",
+      "properties": {
+        "name": "[parameters('AppServiceName')]",
+        "tier": "[parameters('AppServicePlanSku')]",
+        "numberOfWorkers": 1
+      },
+      "sku": {
+        "name": "[parameters('AppServicePlanSize')]"
+      },
+      "tags": {
+        "displayName": "AppService"
+      },
+      "type": "Microsoft.Web/serverfarms"
+    },
+    {
+      "name": "[variables('webappName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('AppServiceName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('AppServiceName')))]": "Resource",
+        "displayName": "webapp"
+      },
+      "properties": {
+        "name": "[variables('webappName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServiceName'))]"
+      }
+    },
+    {
+      "apiVersion": "2016-03-01",
+      "type": "Microsoft.Scheduler/jobCollections",
+      "name": "[parameters('jobCollectionName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": "[parameters('Jobcollectionsku')]"
+      },
+      "resources": [
+        
+        {
+          "apiVersion": "2016-03-01",
+          "type": "jobs",
+          "name": "[parameters('jobName')]",
+          "dependsOn": [
+            "[concat('Microsoft.Scheduler/jobCollections/', parameters('jobCollectionName'))]"
+          ],
+          "properties": {
+            "state": "Enabled",
+            "action": {
+              "type": "Http",
+              "request": {
+                "uri": "[concat('http://', reference(resourceId('Microsoft.Web/sites', variables('webappName'))).hostNames[0])]",
+                "method": "GET",
+                "retryPolicy": {
+                  "retryType": "None"
+                }
+              }
+            },
+            "recurrence": {
+              "interval": 1,
+              "frequency": "Week",
+              "schedule": {
+                "weekDays": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+                "hours": [ 10, 12 ],
+                "minutes": [0,30]
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "sku": {
+        "name": "[parameters('storageType')]"
+      },
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "storage"
+      },
+      "kind": "Storage"
+    },
+    
+    {
+      "name": "[variables('sqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "sqlserver"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('sqlserverAdminLogin')]",
+        "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[parameters('sqldatabaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', variables('sqlserverName'))]"
+          ],
+          "tags": {
+            "displayName": "sqldatabase"
+          },
+          "properties": {
+            "collation": "[parameters('sqldatabaseCollation')]",
+            "edition": "[parameters('sqldatabaseEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('sqldatabaseRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "[variables('cdnprofileName')]",
+      "type": "Microsoft.Cdn/profiles",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-04-02",
+      "sku": {
+        "name": "Standard_Verizon"
+      },
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "demo123"
+      },
+      "resources": [
+        {
+          "name": "[variables('cdnendpointName')]",
+          "type": "endpoints",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2016-04-02",
+          "dependsOn": [
+            "[resourceId('Microsoft.Cdn/profiles', variables('cdnprofileName'))]"
+          ],
+          "tags": {
+            "displayName": "demo123"
+          },
+          "properties": {
+            "originHostHeader": "[replace(replace(reference(variables('storageName')).primaryEndpoints.blob,'https://',''),'/','')]",
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true,
+            "queryStringCachingBehavior": "IgnoreQueryString",
+            "contentTypesToCompress": [
+              "text/plain",
+              "text/html",
+              "text/css",
+              "application/x-javascript",
+              "text/javascript"
+            ],
+            "isCompressionEnabled": true,
+            "origins": [
+              {
+                "name": "origin1",
+                "properties": {
+                  "hostName": "[replace(replace(reference(variables('storageName')).primaryEndpoints.blob,'https://',''),'/','')]"
+                }
+              }
+            ]
+          }
+        
+        }
+        
+      ]
+  
+    }
+    //enable this script if you want to use password value form keyvalut for sql server
+    /*{
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[parameters('keyVaultName')]",
+      "apiVersion": "2016-10-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "enabledForDeployment": "[parameters('enableVaultForDeployment')]",
+        "enabledForDiskEncryption": "[parameters('enableVaultForDiskEncryption')]",
+        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+        "tenantId": "[parameters('tenantId')]",
+        "accessPolicies": [
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[parameters('objectId')]",
+            "permissions": {
+              "keys": "[parameters('keysPermissions')]",
+              "secrets": "[parameters('secretsPermissions')]"
+            }
+          }
+        ],
+        "sku": {
+          "name": "[parameters('keyvaultskuName')]",
+          "family": "A"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "name": "yashdemo123/SQLPassword",
+      "apiVersion": "2016-10-01",
+      "properties": {
+          "contentType": "SecureString",
+          "value": "admin.123456"
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.KeyVault/vaults', 'yashdemo123')]"
+      ]
+  }*/
+  ],
+  "outputs": {}
+}
