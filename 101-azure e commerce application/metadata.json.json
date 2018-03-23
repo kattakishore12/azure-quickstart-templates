@@ -1,0 +1,7 @@
+{
+  "itemDisplayName": "azure e-commerce web application",
+  "description": "This template contains all the resources needed to configure a simple e-commmerce web application. It has ARM template as well as PowerShell scripts to configure the resources which are mentioned in the reference architecture.",
+  "summary": "This template contains all the resources needed to configure a simple e-commmerce web application. It has ARM template as well as PowerShell scripts to configure the resources which are mentioned in the reference architecture.",
+  "githubUsername": "",
+  "dateUpdated": "<e.g. 2015-12-20>"
+}
