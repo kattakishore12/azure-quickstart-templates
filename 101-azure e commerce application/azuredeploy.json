@@ -117,91 +117,13 @@
       }
     }
   },
-//use the below keyvault script in case you want to create keyvalut and store key for sql password
-  /*"keyVaultName": {
-    "type": "string",
-    "metadata": {
-      "description": "Name of the Vault"
-    }
-  },
-  "tenantId": {
-    "type": "string",
-    "defaultValue": "[subscription().tenantId]",
-    "metadata": {
-      "description": "Tenant Id of the subscription. Get using Get-AzureRmSubscription cmdlet or Get Subscription API"
-    }
-  },
-  "objectId": {
-    "type": "string",
-    "metadata": {
-      "description": "Object Id of the AD user. Get using Get-AzureRmADUser or Get-AzureRmADServicePrincipal cmdlets"
-    }
-  },
-  "keysPermissions": {
-    "type": "array",
-    "defaultValue": ["all"],
-    "metadata": {
-      "description": "Permissions to keys in the vault. Valid values are: all, create, import, update, get, list, delete, backup, restore, encrypt, decrypt, wrapkey, unwrapkey, sign, and verify."
-    }
-  },
-  "secretsPermissions": {
-    "type": "array",
-    "defaultValue": ["all"],
-    "metadata": {
-      "description": "Permissions to secrets in the vault. Valid values are: all, get, set, list, and delete."
-    }
-  },
-  "skuName": {
-    "type": "string",
-    "defaultValue": "Standard",
-    "allowedValues": [
-      "Standard",
-      "Premium"
-    ],
-    "metadata": {
-      "description": "SKU for the vault"
-    }
-  },
-  "enableVaultForDeployment": {
-    "type": "bool",
-    "defaultValue": true,
-    "allowedValues": [
-      true,
-      false
-    ],
-    "metadata": {
-      "description": "Specifies if the vault is enabled for a VM deployment"
-    }
-  },
-  "enableVaultForDiskEncryption": {
-    "type": "bool",
-    "defaultValue": true,
-    "allowedValues": [
-      true,
-      false
-    ],
-    "metadata": {
-      "description": "Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."
-    }
-  },
-  "enabledForTemplateDeployment": {
-    "type": "bool",
-    "defaultValue": true,
-    "allowedValues": [
-      true,
-      false
-    ],
-    "metadata": {
-      "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
-    }
-  }
-},*/
+
   "variables": {
     "webappName": "[concat('webapp', uniqueString(resourceGroup().id))]",
     "storageName": "[concat('storage', uniqueString(resourceGroup().id))]",
     "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
-    "cdnprofileName": "demo123",
-    "cdnendpointName": "[concat('demo123', uniqueString(resourceGroup().id))]"},
+    "cdnprofileName": "[concat('cdnprofile', uniqueString(resourceGroup().id))]",
+    "cdnendpointName": "[concat('cndendpoint', uniqueString(resourceGroup().id))]"},
   "resources": [
     {
       "apiVersion": "2015-08-01",
@@ -354,7 +276,7 @@
       },
       "dependsOn": [ ],
       "tags": {
-        "displayName": "demo123"
+        "displayName": "[variables('cdnprofileName')]"
       },
       "resources": [
         {
@@ -366,7 +288,7 @@
             "[resourceId('Microsoft.Cdn/profiles', variables('cdnprofileName'))]"
           ],
           "tags": {
-            "displayName": "demo123"
+            "displayName": "[variables('cdnendpointname')]"
           },
           "properties": {
             "originHostHeader": "[replace(replace(reference(variables('storageName')).primaryEndpoints.blob,'https://',''),'/','')]",
@@ -396,45 +318,8 @@
       ]
   
     }
-    //enable this script if you want to use password value form keyvalut for sql server
-    /*{
-      "type": "Microsoft.KeyVault/vaults",
-      "name": "[parameters('keyVaultName')]",
-      "apiVersion": "2016-10-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "enabledForDeployment": "[parameters('enableVaultForDeployment')]",
-        "enabledForDiskEncryption": "[parameters('enableVaultForDiskEncryption')]",
-        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
-        "tenantId": "[parameters('tenantId')]",
-        "accessPolicies": [
-          {
-            "tenantId": "[parameters('tenantId')]",
-            "objectId": "[parameters('objectId')]",
-            "permissions": {
-              "keys": "[parameters('keysPermissions')]",
-              "secrets": "[parameters('secretsPermissions')]"
-            }
-          }
-        ],
-        "sku": {
-          "name": "[parameters('keyvaultskuName')]",
-          "family": "A"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "name": "yashdemo123/SQLPassword",
-      "apiVersion": "2016-10-01",
-      "properties": {
-          "contentType": "SecureString",
-          "value": "admin.123456"
-      },
-      "dependsOn": [
-          "[resourceId('Microsoft.KeyVault/vaults', 'yashdemo123')]"
-      ]
-  }*/
+  
+    
   ],
   "outputs": {}
 }
