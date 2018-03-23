@@ -2,7 +2,7 @@ This template allows you to create a simple e-commerce web application in Azure,
 
 1. App Service Plan
 2. Web application
-3. Web Job
+3. Job Collection and Web Job
 4. Azure SQL server and database
 5. Stroage account
 6. CDN profile, endpoint
@@ -14,6 +14,7 @@ Script execution:
 2. Modify the azuredepoy.parameter.json file with "subscription ID", "resource group name" and the "keyvalutname" (which you will get from the prereqs script).
 3. execute the main scripts.
 
+Please note that, the ARM template will not create File, Queue, Blob storages as we don't have the provision to do that via ARM.
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2F100-blank-template%2Fazuredeploy.json" target="_blank">
 <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.png"/>
